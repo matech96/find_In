@@ -100,7 +100,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="@dimen/fab_margin"
             android:inputType="textShortMessage"
             android:imeOptions="actionDone"
             android:hint="Where are you now?"/>
@@ -110,7 +109,7 @@
             android:layout_height="wrap_content"
             android:onClick="handelButtonClick"
             android:text="Plan!"
-            android:drawableTop="@drawable/ic_directions_black_48dp"/>
+            android:drawableTop="@drawable/ic_directions_black_24dp"/>
     </LinearLayout>
 
 </LinearLayout>

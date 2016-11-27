@@ -61,10 +61,16 @@ public class MainActivity extends AppCompatActivity
 
                     ArrayAdapter adapter = (ArrayAdapter) search.getAdapter();
                     search.setAdapter(null);
-                    search.setText(map.clickHere(sCoord));
+                    String room = map.clickHere(sCoord);
+                    search.setText(room);
                     search.setAdapter(adapter);
 
-                    selectRoom(search.getText().toString());
+                    if (!room.equals("")) {
+                        selectRoom(search.getText().toString());
+                    } else {
+                        LinearLayout placeCard = (LinearLayout) findViewById(R.id.placeCard);
+                        placeCard.setVisibility(View.GONE);
+                    }
                 }
                 return true;
             }
