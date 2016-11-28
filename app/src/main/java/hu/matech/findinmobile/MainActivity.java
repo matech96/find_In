@@ -6,28 +6,19 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,20 +26,6 @@ public class MainActivity extends AppCompatActivity
 
         //Set up stuff
         setContentView(R.layout.activity_main);
-
-        ///LEGACY///
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.setDrawerListener(toggle);
-//        toggle.syncState();
-//
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        navigationView.setNavigationItemSelectedListener(this);
-        ////////////
 
         //Set up the map
         final ScalableMap map = (ScalableMap) findViewById(R.id.map);
@@ -62,15 +39,16 @@ public class MainActivity extends AppCompatActivity
                     ArrayAdapter adapter = (ArrayAdapter) search.getAdapter();
                     search.setAdapter(null);
                     String room = map.clickHere(sCoord);
-                    search.setText(room);
-                    search.setAdapter(adapter);
 
-                    if (!room.equals("")) {
+                    if (room != null) {
+                        search.setText(room);
                         selectRoom(search.getText().toString());
                     } else {
+                        redrawLevelButtons();
                         LinearLayout placeCard = (LinearLayout) findViewById(R.id.placeCard);
                         placeCard.setVisibility(View.GONE);
                     }
+                    search.setAdapter(adapter);
                 }
                 return true;
             }
@@ -144,31 +122,14 @@ public class MainActivity extends AppCompatActivity
     public void selectRoom(String name) {
         ScalableMap map = (ScalableMap) findViewById(R.id.map);
 
+        LinearLayout ll = (LinearLayout) findViewById(R.id.placeCard);
+        ll.setVisibility(View.VISIBLE);
+
         map.highlightRoom(name);
         redrawLevelButtons();
-
-        LinearLayout ll = (LinearLayout) findViewById(R.id.placeCard);
-//        int toMove = -ll.getHeight();
-//        TranslateAnimation tr = new TranslateAnimation(0, 0, 0, toMove);
-//        tr.setDuration(500);
-//        tr.setFillAfter(true);
-        ll.setVisibility(View.VISIBLE);
-//        ll.startAnimation(tr);
-//        ll.setY(ll.getY()+toMove);
-
-//        ll.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                LinearLayout ll = (LinearLayout) findViewById(R.id.placeCard);
-//                ll.setY(ll.getY()+100);
-//            }
-//        }, 500);
     }
 
     public void handelButtonClick(View v) {
-//        EditText from = (EditText) findViewById(R.id.from);
-//        EditText to = (EditText) findViewById(R.id.to);
-
         AutoCompleteTextView from = (AutoCompleteTextView) findViewById(R.id.search);
         AutoCompleteTextView to = (AutoCompleteTextView) findViewById(R.id.PLsearch);
 
@@ -219,68 +180,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        } else {
-//            super.onBackPressed();
-//        }
-
         LinearLayout placeCard = (LinearLayout) findViewById(R.id.placeCard);
         if (placeCard.getVisibility() == View.GONE) {
             super.onBackPressed();
         } else {
             ScalableMap map = (ScalableMap) findViewById(R.id.map);
-            map.dontShowRoute();
+            map.dontShowAnything();
             placeCard.setVisibility(View.GONE);
 
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

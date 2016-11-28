@@ -3,7 +3,8 @@ package hu.matech.FindInEngine;
 import java.util.ArrayList;
 
 /**
- * This contains a series of {@link Edge}. It guaranties that the Edges are in a valid rout, if the structure of the graph hasn't been changed since the adding.
+ * This contains a series of {@link Edge}. It guaranties that the {@link Edge}s are in a valid rout,
+ * if the structure of the graph hasn't been changed since the adding.
  * @version 1.0
  */
 public class Rout {
@@ -21,8 +22,8 @@ public class Rout {
     }
 
     /**
-     * Copies an other {@link Rout} object.
-     * @param other The object to copy.
+     * Copies an other {@link Rout} instance.
+     * @param other The instance to copy.
      */
     public Rout(Rout other) {
         steps = new ArrayList<>(other.steps);
@@ -54,9 +55,13 @@ public class Rout {
         return res;
     }
 
+    /**
+     * Returns the neighbors of the given {@link Node} in this route.
+     * @param n
+     * @return
+     */
     public Node[] getNeighborsInRoute(Node n) {
         ArrayList<Node> res = new ArrayList<>();
-//        Node[] res = new Node[2];
         int i = 0;
         for (Edge e : steps) {
             Node neighbor = e.getNeighbor(n);
@@ -70,6 +75,14 @@ public class Rout {
         return res.toArray(new Node[i]);
     }
 
+    /**
+     * Simulate you are going on the route. You are in a and go to b. You go to the same direction,
+     * its c. Returns c. If a or b is not part of the route or a nd b are not neighbors or b is the
+     * last {@link Node}, returns null.
+     * @param a
+     * @param b
+     * @return
+     */
     public Node getNextNodeInRoute(Node a, Node b) {
         Node[] neighborsOfB = getNeighborsInRoute(b);
         if (neighborsOfB.length != 2) {
@@ -86,8 +99,8 @@ public class Rout {
     }
 
     /**
-     * Returns an ArrayList of {@link Edge} included by the {@link Rout}
-     * @return ArrayList of {@link Edge} included by the {@link Rout}.
+     * Returns an ArrayList of {@link Edge} included by the route
+     * @return ArrayList of {@link Edge} included by the route.
      */
     public ArrayList<Edge> getSteps(){
         return steps;
@@ -96,7 +109,8 @@ public class Rout {
     /**
      * Add an {@link Edge} to the end.
      * @param edge {@link Edge} to add.
-     * @throws RuntimeException If the {@link Edge} cannot be connected to the last point of the {@link Rout}.
+     * @throws RuntimeException If the {@link Edge} cannot be connected to the last point of the
+     * {@link Rout}.
      */
     public void add(Edge edge) throws RuntimeException{
         if (!last.getConnections().contains(edge)){
@@ -108,20 +122,18 @@ public class Rout {
 
     /**
      * Add a {@link Rout} to the end.
-     * @param {@link Rout} {@link Rout} to add.
+     * @param rout {@link Rout} to add.
      * @throws RuntimeException If the {@link Rout} cannot be connected to the last point of the {@link Rout}.
      */
     public void add(Rout rout) throws RuntimeException{
-        if (rout.numEdges() != 0){
-            if (rout.last != last){
-                Edge e = rout.last.getEdgeToNeighbor(last);
-                if (e != null){
-                    steps.add(e);
-                } else {
-                    throw new RuntimeException("The given rout cannot be connected to the last point of the existing rout!");
-                }
+        if (rout.numEdges() == 0){
+            if (rout.start != last){
+                this.steps.addAll(rout.steps);
+                last = rout.last;
+            } else {
+                throw new RuntimeException("The given rout cannot be connected to the last" +
+                        "point of the existing rout!");
             }
-            this.steps.addAll(rout.steps);
         }
     }
 
@@ -134,8 +146,8 @@ public class Rout {
     }
 
     /**
-     * Summarizes the lengths of the {@link Edge}-s in the rout.
-     * @return Sum of lengths of the {@link Edge}-s in the rout.
+     * Summarizes the lengths of the {@link Edge}s in the rout.
+     * @return Sum of lengths of the {@link Edge}s in the rout.
      */
     public  double length(){
         double res = 0;

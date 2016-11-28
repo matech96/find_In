@@ -7,13 +7,8 @@ import org.json.*;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import hu.matech.FindInEngine.Coordinates;
 
 
 /**
@@ -73,17 +68,22 @@ public class RoutFinder {
         public void addRout(Rout rout) {
             this.rout.add(rout);
         }
-
-//        public ArrayList<Edge> getEdgesInLevel(int level) {
-//            ArrayList<Edge> res = new ArrayList<>();
-//            for (Edge e : connections)
-//        }
     }
 
+    /**
+     * Returns on which level is the {@link Node}.
+     * @param node To examine.
+     * @return Tho level of the {@link Node}.
+     */
     public int getLevelOfNode(Node node) {
         return ((RNode) node).getLevel();
     }
 
+    /**
+     * Returns a list of {@link Edge}s which both end are on the given level.
+     * @param level
+     * @return
+     */
     public ArrayList<Edge> getEdgesInLevel(int level) {
         ArrayList<Edge> res = new ArrayList<>();
         for (RNode n : ((HashMap<String, RNode>)getNodesInLevel(level)).values()) {
@@ -96,6 +96,11 @@ public class RoutFinder {
         return res;
     }
 
+    /**
+     * Returns a list of {@link Node}s which are on the given level.
+     * @param level
+     * @return
+     */
     public HashMap<String, ? extends Node> getNodesInLevel(int level) {
         HashMap<String, RNode> res = new HashMap<>();
         for (Map.Entry<String, RNode> e : places.entrySet()) {
@@ -107,7 +112,8 @@ public class RoutFinder {
     }
 
     /**
-     * Return every place (for example rooms) in a HashMap(key - String name of the place, value RNode(type of {@link Node}))
+     * Return every place (for example rooms) in a HashMap(key - String name of the place, value
+     * RNode(type of {@link Node}))
      * @return
      */
     public HashMap<String, RNode> getPlaces() {
@@ -138,8 +144,9 @@ public class RoutFinder {
 
 
     /**
-     * Reads the data from a JSON file.
+     * Reads the data from a JSON file and connects it to the upper and bellowed levels.
      * @param is InputStream for the source file which contains the graph.
+     * @param level The level of the graph.
      */
     public void addLevel(InputStream is, int level){
         HashMap<String,  Node> nodesInLevelUp = (HashMap<String, Node>) getNodesInLevel(level + 1);
@@ -161,12 +168,15 @@ public class RoutFinder {
                 double y = node.getDouble("y");
                 Coordinates cords = new Coordinates(x, y);
                 String name = (String) node.get("title");
+
                 //Create Node
                 RNode newNode = new RNode(cords, level);
 
-                if (name.equals("")) {  //No name is an alias for "-f"
+                //No name is an alias for "-f"
+                if (name.equals("")) {
                     name = "-f";
                 }
+
                 if (name.startsWith("-")) {
                     //Set type of the Node
                     NodeType type = NodeType.ROOM;
@@ -176,7 +186,7 @@ public class RoutFinder {
                             type = NodeType.FLOOR;
                             break;
                         case 'e':
-                            type = NodeType.ELAVATOR;
+                            type = NodeType.ELEVATOR;
                             break;
                         case 's':
                             type = NodeType.STAIRHOUSE;
@@ -185,20 +195,18 @@ public class RoutFinder {
                             break;
                     }
                     newNode.setType(type);
+
+                    // Set the name if it is give, if it isn't generate one.
                     if (name.length() > 3) {
                         name = name.substring(3);
                     } else {
-                        name = name + String.valueOf(places.size());    //If name is not given generate one.
+                        name = name + String.valueOf(places.size());
                     }
+
                     // Connect it by the rule to other levels.
-                    if (type == NodeType.ELAVATOR || type == NodeType.STAIRHOUSE) {
-//                        ArrayList<String> keys = new ArrayList<>(places.keySet());
-//                        Collections.sort(keys);
-
-
+                    if (type == NodeType.ELEVATOR || type == NodeType.STAIRHOUSE) {
                         String toSearch = (name + '_');
                         for (String listed : places.keySet()) {
-//                            Set<String> set = places.keySet().stream().filter(s -> s.startsWith("address")).collect(Collectors.toSet());
                             if (listed.startsWith(toSearch)) {
                                 Node a = nodesInLevelUp.get(listed);
                                 Node b = nodesInLevelDown.get(listed);
@@ -216,7 +224,8 @@ public class RoutFinder {
 
                 //Add the new node to list
                 if (places.keySet().contains(name)) {
-                    throw new RuntimeException("2 nodes has the same name. Only special nodes f.e. elevators can have the same name!" + name);
+                    throw new RuntimeException("2 nodes has the same name. Only special nodes" +
+                            " f.e. elevators can have the same name! The problematic name: " + name);
                 }
                 places.put(name, newNode);
                 id_node.put(id, newNode);
@@ -260,14 +269,20 @@ public class RoutFinder {
             RNode minNeighbor = null;       //this is going to bee in the circle when this turn is over
             double minDistance = -1;        //
             Rout minRout = null;            //
+
             for (RNode node : places.values()) {
-                if (node.isDistanceSet()){  //Check every Node inside the circle.
+                //Check every Node inside the circle.
+                if (node.isDistanceSet()) {
                     ArrayList<Edge> neighbors = node.getConnections();
                     for (Edge edge : neighbors){
                         RNode neighbor = (RNode) edge.getNeighbor(node);
-                        if (!neighbor.isDistanceSet()){ //If someone has a neighbor outside the circle
-                            double neighborDistance = edge.getWeight() + node.getDistance();    //Calculate the distance between the neighbor and from Nodes
-                            if ((minNeighbor == null) || (minDistance > neighborDistance)) {    //We search the smallest.
+
+                        //If someone has a neighbor outside the circle
+                        if (!neighbor.isDistanceSet()) {
+                            //Calculate the distance between the neighbor and Node from
+                            double neighborDistance = edge.getWeight() + node.getDistance();
+                            //We search the smallest.
+                            if ((minNeighbor == null) || (minDistance > neighborDistance)) {
                                 minNeighbor = neighbor;
                                 minDistance = neighborDistance;
                                 minRout = new Rout(node.getRout());
@@ -277,6 +292,7 @@ public class RoutFinder {
                     }
                 }
             }
+
             //If there is no neighbor left, no route exists.
             if (minNeighbor != null) {
                 minNeighbor.setDistance(minDistance);
@@ -286,12 +302,13 @@ public class RoutFinder {
             }
         }
 
-
-        Rout res = new Rout(t.getRout());      //make a copy
-        for (RNode node : places.values()){                 //clean up
+        // Clean up
+        Rout res = new Rout(t.getRout());
+        for (RNode node : places.values()){
             node.setDistance(-1);
             node.setRout(new Rout(node));
         }
+
         if (res.length() == 0) {
             return null;
         } else {

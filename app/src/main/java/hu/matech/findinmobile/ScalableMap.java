@@ -22,7 +22,7 @@ import hu.matech.FindInEngine.Rout;
 import hu.matech.FindInEngine.RoutFinder;
 
 /**
- * Created by matech on 2016.11.04..
+ * Controls a ScalableMap
  */
 
 public class ScalableMap extends SubsamplingScaleImageView {
@@ -51,10 +51,6 @@ public class ScalableMap extends SubsamplingScaleImageView {
     }
 
     private void setUpMap(Context context) {
-//        FrameLayout map = (FrameLayout) findViewById(R.id.map);
-//        DrawGraph graph = (DrawGraph) findViewById(R.id.graph);
-//        ImageView pic = (ImageView) findViewById(R.id.pic);
-
         redrawPicture();
 
         rf = new RoutFinder();
@@ -78,9 +74,11 @@ public class ScalableMap extends SubsamplingScaleImageView {
         }
     }
 
-    public void redrawPicture() {
+    /**
+     * Changes the picture what is shown. Should call if level was changed.
+     */
+    protected void redrawPicture() {
         ScalableMap map = (ScalableMap) findViewById(R.id.map);
-//        map.setImage(ImageSource.asset("map_level_" + String.valueOf(level) + ".jpg"));
         levelMax = 2;
         levelMin = 1;
         switch (level) {
@@ -93,18 +91,35 @@ public class ScalableMap extends SubsamplingScaleImageView {
         }
     }
 
+    /**
+     * Returns the name of the {@link Node}s on all levels.
+     * @return The name of the {@link Node}s on all levels.
+     */
     public String [] getPlaces() {
         return rf.getPlaces().keySet().toArray(new String[0]);
     }
 
+    /**
+     * Returns the level which is displayed.
+     * @return The level which is displayed.
+     */
     public int getLevel() {
         return level;
     }
 
+    /**
+     * Same as {@link ScalableMap#goToLevel(int, boolean)}. But the resetLevel parameter is false.
+     * @param l
+     */
     public void goToLevel(int l) {
         goToLevel(l, false);
     }
 
+    /**
+     * Displays the given level.
+     * @param l Level to display.
+     * @param resetSize If false keeps the scale and possession, if true uses the default.
+     */
     public void goToLevel(int l, boolean resetSize) {
         if (levelMin <= l && l <= levelMax && l != level) {
             level = l;
@@ -118,35 +133,59 @@ public class ScalableMap extends SubsamplingScaleImageView {
         }
     }
 
+    /**
+     * Is there a level above us?
+     */
     public boolean isLevelUp() {
         return level < levelMax;
     }
 
+    /**
+     * Is there a level bellow us?
+     */
     public boolean isLevelDown() {
         return level > levelMin;
     }
 
+    /**
+     * Displays the level above us, if there is any.
+     */
     public void levelUp() {
         goToLevel(level+1);
     }
 
+    /**
+     * Displays the level bellow us, if there is any.
+     */
     public void levelDown() {
         goToLevel(level-1);
     }
 
+    /**
+     * Same as {@link #findClosestRoomNodeInLevel(Coordinates, float)}. But {@link Coordinates} is
+     * created from x and y and radius is 100.
+     * @param x The x coordinate of the center.
+     * @param y The y coordinate of the center.
+     * @return Name of the {@link Node} closest to the center.
+     */
     private String findClosestRoomNodeInLevel(float x, float y) {
-        return findClosestRoomNodeInLevel(new Coordinates(x, y));
+        return findClosestRoomNodeInLevel(new Coordinates(x, y), 100);
     }
 
-    private String findClosestRoomNodeInLevel(Coordinates c) {
-        float minDist = 100;
+    /**
+     * Returns the name of the {@link Node} closest to the c in circle whit the given radius. If
+     * there is no {@link Node} in the circle returns an empty String.
+     * @param c Center of the circle.
+     * @return Name of the {@link Node} closest to the center.
+     */
+    private String findClosestRoomNodeInLevel(Coordinates c, float radius) {
         String minName = "";
         for (Map.Entry<String, ? extends Node> e : rf.getNodesInLevel(level).entrySet()) {
             Node n = e.getValue();
             if (n.getType() != NodeType.FLOOR) {
                 float dist = (float) n.distance(c);
-                if (dist < minDist) {
-                    minDist = dist;
+                if (dist < radius) {
+                    radius = dist;
                     minName = e.getKey();
                 }
             }
@@ -154,22 +193,32 @@ public class ScalableMap extends SubsamplingScaleImageView {
         return minName;
     }
 
+    /**
+     * "Casts" {@link Coordinates} to PointF.
+     */
     private PointF coordinatesToPointF(Coordinates c) {
         return new PointF((float) c.getX(), (float) c.getY());
     }
 
+    /**
+     * First calls {@link #findClosestRoomNodeInLevel(float, float)}, if returns empty String, this
+     * function returns null. If not and a {@link Rout} is shown, checks f with
+     * {@link Node#isElavatorOrStairhouse()}, if true displays the level tho which the {@link Rout}
+     * leads. If false marks the {@link Node} as clicked
+     * @param f The point to investigate.
+     * @return The name returned by {@link #findClosestRoomNodeInLevel(float, float)}.
+     */
     public String clickHere(PointF f) {
         String name = findClosestRoomNodeInLevel(f.x, f.y);
         if (name == "") {
             clicked = null;
+            return null;
         } else {
             Node newClicked = rf.get(name);
-            if (toShow != null && (newClicked.getType() == NodeType.ELAVATOR || newClicked.getType() == NodeType.STAIRHOUSE)) {
+            if (toShow != null && newClicked.isElavatorOrStairhouse()) {
                 int newLevel = toWhichFloorDoesItGo(newClicked);
                 goToLevel(newLevel);
                 return null;
-            } else if (newClicked == clicked) {
-                highlightRoom(name);
             } else {
                 clicked = newClicked;
             }
@@ -178,6 +227,10 @@ public class ScalableMap extends SubsamplingScaleImageView {
         return name;
     }
 
+    /**
+     * Displays the level where the room is and scales on it. If name is null deselect selected room.
+     * @param name
+     */
     public void highlightRoom(String name) {
         if (rf.get(name) == null) {
             clicked = null;
@@ -194,6 +247,10 @@ public class ScalableMap extends SubsamplingScaleImageView {
         }
     }
 
+    /**
+     * Plans and displays the fastest {@link Rout} between the {@link Node}s to which the names refer.
+     * @return False if there exist no {@link Rout}.
+     */
     public boolean showRoute(String from, String to) {
         Rout route = rf.findRout(from, to);
         if (route == null) {
@@ -206,13 +263,23 @@ public class ScalableMap extends SubsamplingScaleImageView {
         }
     }
 
-    public void dontShowRoute() {
+    /**
+     * Removes any kind of graphic from the picture.
+     */
+    public void dontShowAnything() {
         toShow = null;
         clicked = null;
     }
 
+    /**
+     * If a {@link Rout} is displayed and the given {@link Node} is an elevator or stairhouse
+     * returns the level to which it leads on the {@link Rout}. If there is no {@link Rout} or n is
+     * not elevator or stairhouse returns the level of n.
+     * @param n
+     * @return
+     */
     public int toWhichFloorDoesItGo(Node n) {
-        if (toShow == null || (n.getType() != NodeType.ELAVATOR && n.getType() != NodeType.STAIRHOUSE)) {
+        if (toShow == null || !n.isElavatorOrStairhouse()) {
             return rf.getLevelOfNode(n);
         } else {
             Node[] neighborsOfN = toShow.getNeighborsInRoute(n);
@@ -223,7 +290,7 @@ public class ScalableMap extends SubsamplingScaleImageView {
             } else if (neighborsOfN.length == 2) {
                 Node candidate1 = neighborsOfN[0];
                 Node candidate2 = neighborsOfN[1];
-                if (candidate1.getType() == NodeType.ELAVATOR || candidate1.getType() == NodeType.STAIRHOUSE) {
+                if (candidate1.isElavatorOrStairhouse()) {
                     b = candidate1;
                 } else {
                     b = candidate2;
@@ -231,7 +298,7 @@ public class ScalableMap extends SubsamplingScaleImageView {
             } else {
                 return rf.getLevelOfNode(n);
             }
-            while (b.getType() == NodeType.ELAVATOR || b.getType() == NodeType.STAIRHOUSE) {
+            while (b.isElavatorOrStairhouse()) {
                 Node c = toShow.getNextNodeInRoute(a, b);
                 a = b;
                 b = c;
@@ -240,6 +307,10 @@ public class ScalableMap extends SubsamplingScaleImageView {
         }
     }
 
+    /**
+     * Draws {@link Rout} and highlighted {@link Node}s.
+     * @param canvas
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -314,7 +385,7 @@ public class ScalableMap extends SubsamplingScaleImageView {
                     case FLOOR:
                         canvas.drawCircle(x, y, lineSize / 2, color);
                         break;
-                    case ELAVATOR:
+                    case ELEVATOR:
                         canvas.drawCircle(x, y, 2*nodeSize, color);
                         int targetLevel = toWhichFloorDoesItGo(n);
                         canvas.drawText(String.valueOf(targetLevel), x, y, textColor);

@@ -1,8 +1,8 @@
 package hu.matech.FindInEngine;
 
 /**
- * Created by akos on 2016.09.06..
+ * Defines the type of a {@link Node}.
  */
 public enum NodeType {
-    ROOM, FLOOR, ELAVATOR, STAIRHOUSE
+    ROOM, FLOOR, ELEVATOR, STAIRHOUSE
 }

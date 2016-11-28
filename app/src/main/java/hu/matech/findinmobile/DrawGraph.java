@@ -104,7 +104,7 @@
 //                case FLOOR:
 //                    canvas.drawCircle(x, y,lineSize/2, blue);
 //                    break;
-//                case ELAVATOR:
+//                case ELEVATOR:
 //                    canvas.drawCircle(x, y,nodeSize, blue);
 //                    break;
 //                case STAIRHOUSE:

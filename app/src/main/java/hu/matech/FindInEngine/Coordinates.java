@@ -1,7 +1,7 @@
 package hu.matech.FindInEngine;
 
 /**
- * It can contain two doubles an x and a y coordinate.
+ * It is used to store an objects possession on a 2D plane. It can contain two doubles an x and a y coordinate.
  * @version 1.0
  */
 public class Coordinates {
@@ -23,7 +23,7 @@ public class Coordinates {
      * @param b The other Coordinates.
      * @return A copy of this minus b.
      */
-    public Coordinates sub(Coordinates b){
+    public Coordinates returnSub(Coordinates b){
         double newX = this.x - b.x;
         double newY = this.y - b.y;
         return new Coordinates(newX, newY);

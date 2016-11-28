@@ -2,8 +2,6 @@ package hu.matech.FindInEngine;
 
 import java.util.ArrayList;
 
-import hu.matech.FindInEngine.Coordinates;
-
 /**
  * It is a point in the graph, that can be connected to other points(Node).
  */
@@ -13,8 +11,7 @@ public class Node {
     protected ArrayList<Edge> connections = new ArrayList<>();
 
     /**
-     * Create a Node at the given Coordinates.
-     *
+     * Create a Node at the given Coordinates and type.
      * @param cords Here will be the node.
      * @param type  Type of the Node. Check {@link NodeType}.
      */
@@ -25,7 +22,6 @@ public class Node {
 
     /**
      * Create a Node at the given Coordinates. Default {@link NodeType} is ROOM.
-     *
      * @param cords Here will be the node.
      */
     public Node(Coordinates cords) {
@@ -33,8 +29,7 @@ public class Node {
     }
 
     /**
-     * Create a Node at the given x and y location.
-     *
+     * Create a Node at the given x and y location and type.
      * @param x
      * @param y
      * @param type Type of the Node.
@@ -45,7 +40,6 @@ public class Node {
 
     /**
      * Create a Node at the given x and y location. Default {@link NodeType} in FLOOR.
-     *
      * @param x
      * @param y
      */
@@ -55,7 +49,6 @@ public class Node {
 
     /**
      * Connect the Node to the Edge. (It is called by {@link Edge#Edge(Node, Node) }). Don't use it manually.
-     *
      * @param edge Edge to add.
      */
     void addConnection(Edge edge) {
@@ -65,25 +58,25 @@ public class Node {
     }
 
     /**
-     * Return an ArrayList of Edge to witch the Node is connected.
+     * Return an ArrayList of {@link Edge} to witch the Node is connected.
      *
-     * @return ArrayList of Edge to witch the Node is connected.
+     * @return ArrayList of {@link Edge}s to witch the Node is connected.
      */
     public ArrayList<Edge> getConnections() {
         return connections;
     }
 
     /**
-     * Removes the given Edge e. (It is called by {@link Edge#Edge(Node, Node) }). Don't use it manually.
-     *
+     * Removes the given {@link Edge} e. (It is called by {@link Edge#Edge(Node, Node) }). Don't use
+     * it manually. If you want to remove a connection call {@link Edge#delete()}.
      * @param e This Edge will be removed.
      */
-    public void removeConnection(Edge e) {
+    void removeConnection(Edge e) {
         connections.remove(e);
     }
 
     /**
-     * Delete all Edge .It will take care of the neighbors.
+     * Delete all {@link Edge}. It will take care of the neighbors.
      */
     public void clearConnections() {
         ArrayList<Edge> copy = new ArrayList<>(connections);
@@ -95,7 +88,6 @@ public class Node {
 
     /**
      * Computes the distance between this and the given Node.
-     *
      * @param b To witch the distance will be computed.
      * @return The distance between this and b.
      */
@@ -103,17 +95,32 @@ public class Node {
         return distance(b.getCords());
     }
 
+    /**
+     * Computes the distance between this and the given node, defined by x and y.
+     * @param x The nodes x coordinate to witch the distance will be computed.
+     * @param y The nodes y coordinate to witch the distance will be computed.
+     * @return The distance between this and the given node, defined by x and y.
+     */
     public double distance(double x, double y) {
         return distance(new Coordinates(x, y));
     }
 
+    /**
+     * Computes the distance between this and the given Node, defined by the {@link Coordinates} c.
+     * @param c To witch the distance will be computed.
+     * @return The distance between this and b.
+     */
     public double distance(Coordinates c) {
-        Coordinates distVec = this.cords.sub(c);
+        Coordinates distVec = this.cords.returnSub(c);
         double x = distVec.getX();
         double y = distVec.getY();
         return Math.sqrt(x * x + y * y);
     }
 
+    /**
+     * Returns the type of the node.
+     * @return The type of the node.
+     */
     public NodeType getType() {
         return type;
     }
@@ -123,9 +130,8 @@ public class Node {
     }
 
     /**
-     * Return an ArrayList of Edge to witch the Node is connected.
-     *
-     * @return ArrayList of Edge to witch the Node is connected.
+     * Return an ArrayList of {@link Edge} to witch the Node is connected.
+     * @return ArrayList of {@link Edge} to witch the Node is connected.
      */
     public ArrayList<Node> getNeighbors() {
         ArrayList<Node> res = new ArrayList<>();
@@ -136,22 +142,24 @@ public class Node {
         return res;
     }
 
+    /**
+     * Returns the {@link Coordinates} of this node.
+     * @return
+     */
     public Coordinates getCords() {
         return cords;
     }
 
     /**
-     * Change the Coordinates to cords.
-     *
-     * @param cords This will be the new Coordinates of the Node.
+     * Change the {@link Coordinates} to cords.
+     * @param cords This will be the new {@link Coordinates} of the Node.
      */
     public void setCords(Coordinates cords) {
         this.cords = cords;
     }
 
     /**
-     * Change the Coordinates to the give values.
-     *
+     * Change the {@link Coordinates}, defined by x and y.
      * @param x The x coordinate.
      * @param y The y coordinate.
      */
@@ -160,31 +168,30 @@ public class Node {
     }
 
     /**
-     * @return double The x coordinate of the Node.
+     * @return The x coordinate of the Node.
      */
     public double getX() {
         return cords.getX();
     }
 
     /**
-     * @return double The y coordinate of the Node.
+     * @return The y coordinate of the Node.
      */
     public double getY() {
         return cords.getY();
     }
 
     /**
-     * Same as {@link Coordinates#toString()}
+     * Uses the format: cords + type
      */
     public String toString() {
         return cords.toString() + type;
     }
 
     /**
-     * Return the Edge which two ends are this and Node n. If there is none return null;
-     *
+     * Returns the {@link Edge} which two ends are this and Node n. If there is none returns null.
      * @param n Should bee neighbor of this.
-     * @return Edge which two ends are this and Node n.
+     * @return {@link Edge} which two ends are this and Node n. If there is none return null.
      */
     public Edge getEdgeToNeighbor(Node n) {
         Edge res = null;
@@ -195,5 +202,13 @@ public class Node {
             }
         }
         return res;
+    }
+
+    /**
+     * Returns true if the nodes type is {@link NodeType#ELEVATOR} or {@link NodeType#STAIRHOUSE}.
+     * @return True if the nodes type is {@link NodeType#ELEVATOR} or {@link NodeType#STAIRHOUSE}.
+     */
+    public boolean isElavatorOrStairhouse() {
+        return (getType() == NodeType.ELEVATOR || getType() == NodeType.STAIRHOUSE);
     }
 }
