@@ -39,12 +39,12 @@ public class Node {
     }
 
     /**
-     * Create a Node at the given x and y location. Default {@link NodeType} in FLOOR.
+     * Create a Node at the given x and y location. Default {@link NodeType} in ROOM.
      * @param x
      * @param y
      */
     public Node(double x, double y) {
-        this(x, y, NodeType.FLOOR);
+        this(x, y, NodeType.ROOM);
     }
 
     /**

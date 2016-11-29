@@ -5,13 +5,13 @@ import static org.junit.Assert.*;
 /**
  * Created by akos on 2016.09.07..
  */
-public class RoutFinderTest {
+public class RouteFinderTest {
     double delta = 1e-5;
 
     @org.junit.Test
     public void addLevel() throws Exception {
         //Run first
-        RoutFinder test = new RoutFinder();
+        RouteFinder test = new RouteFinder();
         test.addLevel(getClass().getClassLoader().getResourceAsStream("toTest.json"), 1);
 
         test.addLevel(getClass().getClassLoader().getResourceAsStream("toTest2.json"), 2);
@@ -43,22 +43,22 @@ public class RoutFinderTest {
 
     @org.junit.Test
     public void findRout() throws Exception {
-        RoutFinder test = new RoutFinder();
+        RouteFinder test = new RouteFinder();
         test.addLevel(getClass().getClassLoader().getResourceAsStream("toTest.json"),1);
 
-        Rout rout = test.findRout("3", "4");
-        assertEquals(2, rout.numEdges());
+        Route route = test.findRout("3", "4");
+        assertEquals(2, route.numEdges());
         double godLength = 0;
         godLength += test.get("3").distance(test.get("to_4"));
         godLength += test.get("to_4").distance(test.get("4"));
-        assertEquals(godLength, rout.length(), 1e-5);
+        assertEquals(godLength, route.length(), 1e-5);
 
-        rout = test.findRout("2_1", "3");
+        route = test.findRout("2_1", "3");
         //System.out.println(rout);
-        assertEquals(1, rout.numEdges());
+        assertEquals(1, route.numEdges());
         godLength = 0;
         godLength += test.get("2_1").distance(test.get("3"));
-        assertEquals(godLength, rout.length(), 1e-5);
+        assertEquals(godLength, route.length(), 1e-5);
     }
 
 }

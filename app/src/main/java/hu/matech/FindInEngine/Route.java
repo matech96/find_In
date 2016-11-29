@@ -7,31 +7,31 @@ import java.util.ArrayList;
  * if the structure of the graph hasn't been changed since the adding.
  * @version 1.0
  */
-public class Rout {
+public class Route {
     protected ArrayList<Edge> steps = new ArrayList<>();
     protected Node last = null;
     protected Node start = null;
 
     /**
-     * Create a new {@link Rout} starting from startingPoint.
-     * @param startingPoint The {@link Rout} starts here.
+     * Create a new {@link Route} starting from startingPoint.
+     * @param startingPoint The {@link Route} starts here.
      */
-    public Rout(Node startingPoint) {
+    public Route(Node startingPoint) {
         start = startingPoint;
         last = startingPoint;
     }
 
     /**
-     * Copies an other {@link Rout} instance.
+     * Copies an other {@link Route} instance.
      * @param other The instance to copy.
      */
-    public Rout(Rout other) {
+    public Route(Route other) {
         steps = new ArrayList<>(other.steps);
         last = other.last;
     }
 
     /**
-     * Checks is the {@link Edge} in the {@link Rout}.
+     * Checks is the {@link Edge} in the {@link Route}.
      * @param e The {@link Edge} to search.
      * @return True if it is in the Route false if it isn't.
      */
@@ -40,7 +40,7 @@ public class Rout {
     }
 
     /**
-     * Checks is the {@link Node} in the {@link Rout}.
+     * Checks is the {@link Node} in the {@link Route}.
      * @param n The {@link Node} to search.
      * @return True if it is in the Route false if it isn't.
      */
@@ -110,7 +110,7 @@ public class Rout {
      * Add an {@link Edge} to the end.
      * @param edge {@link Edge} to add.
      * @throws RuntimeException If the {@link Edge} cannot be connected to the last point of the
-     * {@link Rout}.
+     * {@link Route}.
      */
     public void add(Edge edge) throws RuntimeException{
         if (!last.getConnections().contains(edge)){
@@ -121,15 +121,15 @@ public class Rout {
     }
 
     /**
-     * Add a {@link Rout} to the end.
-     * @param rout {@link Rout} to add.
-     * @throws RuntimeException If the {@link Rout} cannot be connected to the last point of the {@link Rout}.
+     * Add a {@link Route} to the end.
+     * @param route {@link Route} to add.
+     * @throws RuntimeException If the {@link Route} cannot be connected to the last point of the {@link Route}.
      */
-    public void add(Rout rout) throws RuntimeException{
-        if (rout.numEdges() == 0){
-            if (rout.start != last){
-                this.steps.addAll(rout.steps);
-                last = rout.last;
+    public void add(Route route) throws RuntimeException{
+        if (route.numEdges() == 0){
+            if (route.start != last){
+                this.steps.addAll(route.steps);
+                last = route.last;
             } else {
                 throw new RuntimeException("The given rout cannot be connected to the last" +
                         "point of the existing rout!");
@@ -170,8 +170,8 @@ public class Rout {
     }
 
     /**
-     * Returns {@link Node} you have given in the {@link #Rout(Node) constructor}.
-     * @return {@link Node} you have given in the {@link #Rout(Node) constructor}.
+     * Returns {@link Node} you have given in the {@link #Route(Node) constructor}.
+     * @return {@link Node} you have given in the {@link #Route(Node) constructor}.
      */
     public Node getStartingPoint(){
         return start;

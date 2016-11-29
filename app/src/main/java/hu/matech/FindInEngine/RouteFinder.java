@@ -15,12 +15,12 @@ import java.util.Map;
  * This class is designed to process a graph to make it capable of rout planning.
  * @version 1.0
  */
-public class RoutFinder {
+public class RouteFinder {
     protected HashMap<String, RNode> places = new HashMap<>();
 
     protected class RNode extends Node {
         protected int level;
-        protected Rout rout = new Rout(this);
+        protected Route route = new Route(this);
         protected double distance = -1;
 
         public RNode(Coordinates cords, NodeType type, int level) {
@@ -46,15 +46,15 @@ public class RoutFinder {
         }
 
         public void addStep(Edge step){
-            rout.add(step);
+            route.add(step);
         }
 
-        public Rout getRout() {
-            return rout;
+        public Route getRoute() {
+            return route;
         }
 
-        public void setRout(Rout rout) {
-            this.rout = rout;
+        public void setRoute(Route route) {
+            this.route = route;
         }
 
         public double getDistance() {
@@ -65,8 +65,8 @@ public class RoutFinder {
             this.distance = distance;
         }
 
-        public void addRout(Rout rout) {
-            this.rout.add(rout);
+        public void addRout(Route route) {
+            this.route.add(route);
         }
     }
 
@@ -248,13 +248,12 @@ public class RoutFinder {
     }
 
 
-    /**
-     * Find the fastest Rout between String from and String to.
+    /**zz
      * @param from
      * @param to
      * @return a Rout between from and to, if there is any. Returns null if there is none.
      */
-    public Rout findRout(String from, String to){
+    public Route findRout(String from, String to){
         //Ford-algorithm
 
         RNode f = places.get(from);
@@ -268,7 +267,7 @@ public class RoutFinder {
         while (!t.isDistanceSet()){
             RNode minNeighbor = null;       //this is going to bee in the circle when this turn is over
             double minDistance = -1;        //
-            Rout minRout = null;            //
+            Route minRoute = null;            //
 
             for (RNode node : places.values()) {
                 //Check every Node inside the circle.
@@ -285,8 +284,8 @@ public class RoutFinder {
                             if ((minNeighbor == null) || (minDistance > neighborDistance)) {
                                 minNeighbor = neighbor;
                                 minDistance = neighborDistance;
-                                minRout = new Rout(node.getRout());
-                                minRout.add(edge);
+                                minRoute = new Route(node.getRoute());
+                                minRoute.add(edge);
                             }
                         }
                     }
@@ -296,17 +295,17 @@ public class RoutFinder {
             //If there is no neighbor left, no route exists.
             if (minNeighbor != null) {
                 minNeighbor.setDistance(minDistance);
-                minNeighbor.setRout(minRout);
+                minNeighbor.setRoute(minRoute);
             } else {
                 return null;
             }
         }
 
         // Clean up
-        Rout res = new Rout(t.getRout());
+        Route res = new Route(t.getRoute());
         for (RNode node : places.values()){
             node.setDistance(-1);
-            node.setRout(new Rout(node));
+            node.setRoute(new Route(node));
         }
 
         if (res.length() == 0) {

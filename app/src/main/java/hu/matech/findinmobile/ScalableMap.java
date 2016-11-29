@@ -18,23 +18,23 @@ import hu.matech.FindInEngine.Coordinates;
 import hu.matech.FindInEngine.Edge;
 import hu.matech.FindInEngine.Node;
 import hu.matech.FindInEngine.NodeType;
-import hu.matech.FindInEngine.Rout;
-import hu.matech.FindInEngine.RoutFinder;
+import hu.matech.FindInEngine.Route;
+import hu.matech.FindInEngine.RouteFinder;
 
 /**
  * Controls a ScalableMap
  */
 
 public class ScalableMap extends SubsamplingScaleImageView {
-    static RoutFinder rf;
+    static RouteFinder rf;
 
     static Node clicked;
 
-    public static Rout getToShow() {
+    public static Route getToShow() {
         return toShow;
     }
 
-    public static Rout toShow;
+    public static Route toShow;
 
     int level = 1;
     int levelMax;
@@ -53,7 +53,7 @@ public class ScalableMap extends SubsamplingScaleImageView {
     private void setUpMap(Context context) {
         redrawPicture();
 
-        rf = new RoutFinder();
+        rf = new RouteFinder();
         float offsetX = 0;
         float offsetY = 0;
         float numLevels =2;
@@ -202,8 +202,8 @@ public class ScalableMap extends SubsamplingScaleImageView {
 
     /**
      * First calls {@link #findClosestRoomNodeInLevel(float, float)}, if returns empty String, this
-     * function returns null. If not and a {@link Rout} is shown, checks f with
-     * {@link Node#isElavatorOrStairhouse()}, if true displays the level tho which the {@link Rout}
+     * function returns null. If not and a {@link Route} is shown, checks f with
+     * {@link Node#isElavatorOrStairhouse()}, if true displays the level tho which the {@link Route}
      * leads. If false marks the {@link Node} as clicked
      * @param f The point to investigate.
      * @return The name returned by {@link #findClosestRoomNodeInLevel(float, float)}.
@@ -248,11 +248,11 @@ public class ScalableMap extends SubsamplingScaleImageView {
     }
 
     /**
-     * Plans and displays the fastest {@link Rout} between the {@link Node}s to which the names refer.
-     * @return False if there exist no {@link Rout}.
+     * Plans and displays the fastest {@link Route} between the {@link Node}s to which the names refer.
+     * @return False if there exist no {@link Route}.
      */
     public boolean showRoute(String from, String to) {
-        Rout route = rf.findRout(from, to);
+        Route route = rf.findRout(from, to);
         if (route == null) {
             return false;
         } else {
@@ -272,8 +272,8 @@ public class ScalableMap extends SubsamplingScaleImageView {
     }
 
     /**
-     * If a {@link Rout} is displayed and the given {@link Node} is an elevator or stairhouse
-     * returns the level to which it leads on the {@link Rout}. If there is no {@link Rout} or n is
+     * If a {@link Route} is displayed and the given {@link Node} is an elevator or stairhouse
+     * returns the level to which it leads on the {@link Route}. If there is no {@link Route} or n is
      * not elevator or stairhouse returns the level of n.
      * @param n
      * @return
@@ -308,7 +308,7 @@ public class ScalableMap extends SubsamplingScaleImageView {
     }
 
     /**
-     * Draws {@link Rout} and highlighted {@link Node}s.
+     * Draws {@link Route} and highlighted {@link Node}s.
      * @param canvas
      */
     @Override

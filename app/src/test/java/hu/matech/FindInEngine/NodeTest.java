@@ -1,6 +1,8 @@
 package hu.matech.FindInEngine;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.testng.annotations.BeforeMethod;
 
 import java.util.ArrayList;
 
@@ -10,11 +12,28 @@ import static org.junit.Assert.*;
  * Created by akos on 2016.09.09..
  */
 public class NodeTest {
-    Node a = new Node(0, 0);
-    Node b = new Node(1, 4);
-    Node c = new Node(1, 2);
-    Edge e = new Edge(a, b);
-    Edge f = new Edge(c, b);
+    Node a;
+    Node b;
+    Node c;
+    Edge e;
+    Edge f;
+
+    @Before
+    public void setUp() throws Exception {
+        a = new Node(new Coordinates(0, 0), NodeType.ELEVATOR);
+        b = new Node(new Coordinates(1, 4));
+        c = new Node(1, 2);
+        e = new Edge(a, b);
+        f = new Edge(c, b);
+    }
+
+    @Test
+    public void type() {
+        assertEquals(NodeType.ELEVATOR, a.getType());
+        assertEquals(NodeType.ROOM, b.getType());
+        c.setType(NodeType.STAIRHOUSE);
+        assertEquals(NodeType.STAIRHOUSE, c.getType());
+    }
 
     @Test
     public void Connections() throws Exception {
