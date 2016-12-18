@@ -60,7 +60,7 @@ public class ScalableMap extends SubsamplingScaleImageView {
         for (int i = 1; i <= numLevels; i++) {
             try {
                 InputStream is = context.getAssets().open("map_level_" + i + ".json");
-                rf.addLevel(is, i);
+                rf.loadAllObjectOnLevel(is, i);
                 for (Node n : rf.getPlaces().values()) {
                     Coordinates c = n.getCords();
                     float x = (float) c.getX() - offsetX;

@@ -52,7 +52,7 @@ public class Node {
      * @param edge Edge to add.
      */
     void addConnection(Edge edge) {
-        if (!getNeighbors().contains(edge.getNeighbor(this))) {
+        if (!getNeighbors().contains(edge.getNeighborOf(this))) {
             connections.add(edge);
         }
     }
@@ -108,7 +108,7 @@ public class Node {
     /**
      * Computes the distance between this and the given Node, defined by the {@link Coordinates} c.
      * @param c To witch the distance will be computed.
-     * @return The distance between this and b.
+     * @return The distance between this and c.
      */
     public double distance(Coordinates c) {
         Coordinates distVec = this.cords.returnSub(c);
@@ -136,7 +136,7 @@ public class Node {
     public ArrayList<Node> getNeighbors() {
         ArrayList<Node> res = new ArrayList<>();
         for (Edge c : connections) {
-            Node neighbor = c.getNeighbor(this);
+            Node neighbor = c.getNeighborOf(this);
             res.add(neighbor);
         }
         return res;
@@ -196,7 +196,7 @@ public class Node {
     public Edge getEdgeToNeighbor(Node n) {
         Edge res = null;
         for (Edge e : connections) {
-            if (e.getNeighbor(this) == n) {
+            if (e.getNeighborOf(this) == n) {
                 res = e;
                 break;
             }

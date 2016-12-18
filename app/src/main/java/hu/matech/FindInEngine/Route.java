@@ -62,17 +62,16 @@ public class Route {
      */
     public Node[] getNeighborsInRoute(Node n) {
         ArrayList<Node> res = new ArrayList<>();
-        int i = 0;
         for (Edge e : steps) {
-            Node neighbor = e.getNeighbor(n);
+            Node neighbor = e.getNeighborOf(n);
             if (neighbor != null) {
-                res.add(neighbor); i++;
-                if (i > 1) {
+                res.add(neighbor);
+                if (res.size() > 1) {
                     break;
                 }
             }
         }
-        return res.toArray(new Node[i]);
+        return res.toArray(new Node[res.size()]);
     }
 
     /**
@@ -116,12 +115,13 @@ public class Route {
         if (!last.getConnections().contains(edge)){
             throw new RuntimeException("The edge cannot be connected to the last point of the rout!");
         }
-        last = edge.getNeighbor(last);
+        last = edge.getNeighborOf(last);
         steps.add(edge);
     }
 
     /**
-     * Add a {@link Route} to the end.
+     * Add a {@link Route} to the end. The route's {@link #getStartingPoint() starting point} and this
+     * {@link #getEndingPoint() ending point} muss be equal.
      * @param route {@link Route} to add.
      * @throws RuntimeException If the {@link Route} cannot be connected to the last point of the {@link Route}.
      */

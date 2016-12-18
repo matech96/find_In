@@ -12,9 +12,9 @@ public class RouteFinderTest {
     public void addLevel() throws Exception {
         //Run first
         RouteFinder test = new RouteFinder();
-        test.addLevel(getClass().getClassLoader().getResourceAsStream("toTest.json"), 1);
+        test.loadAllObjectOnLevel(getClass().getClassLoader().getResourceAsStream("toTest.json"), 1);
 
-        test.addLevel(getClass().getClassLoader().getResourceAsStream("toTest2.json"), 2);
+        test.loadAllObjectOnLevel(getClass().getClassLoader().getResourceAsStream("toTest2.json"), 2);
 
         //Is all node stored?
         assertEquals(10, test.getPlaces().size());
@@ -36,7 +36,7 @@ public class RouteFinderTest {
         //Check types
         assertEquals(NodeType.ROOM, n.getType());
 
-         n = test.places.get("to_4");
+         n = test.places.get("to");
         assertEquals(NodeType.ELEVATOR, n.getType());
 
     }
@@ -44,20 +44,20 @@ public class RouteFinderTest {
     @org.junit.Test
     public void findRout() throws Exception {
         RouteFinder test = new RouteFinder();
-        test.addLevel(getClass().getClassLoader().getResourceAsStream("toTest.json"),1);
+        test.loadAllObjectOnLevel(getClass().getClassLoader().getResourceAsStream("toTest.json"),1);
 
         Route route = test.findRout("3", "4");
         assertEquals(2, route.numEdges());
         double godLength = 0;
-        godLength += test.get("3").distance(test.get("to_4"));
-        godLength += test.get("to_4").distance(test.get("4"));
+        godLength += test.get("3").distance(test.get("to"));
+        godLength += test.get("to").distance(test.get("4"));
         assertEquals(godLength, route.length(), 1e-5);
 
-        route = test.findRout("2_1", "3");
+        route = test.findRout("2", "3");
         //System.out.println(rout);
         assertEquals(1, route.numEdges());
         godLength = 0;
-        godLength += test.get("2_1").distance(test.get("3"));
+        godLength += test.get("2").distance(test.get("3"));
         assertEquals(godLength, route.length(), 1e-5);
     }
 

@@ -1,8 +1,6 @@
 package hu.matech.FindInEngine;
 
-import org.junit.Before;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -27,9 +25,9 @@ public class EdgeTest {
 
     @Test
     public void getNeighbor() throws Exception {
-        assertEquals(b, e.getNeighbor(a));
-        assertEquals(a, e.getNeighbor(b));
-        assertEquals(null, e.getNeighbor(c));
+        assertEquals(b, e.getNeighborOf(a));
+        assertEquals(a, e.getNeighborOf(b));
+        assertEquals(null, e.getNeighborOf(c));
     }
 
     @Test

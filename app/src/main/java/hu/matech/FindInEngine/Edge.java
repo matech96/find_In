@@ -38,7 +38,7 @@ public class Edge {
      * @param n The {@link Node} which neighbor you want.
      * @return The neighbor of n connected by this edge.
      */
-    public Node getNeighbor(Node n){
+    public Node getNeighborOf(Node n){
         if (n == a){
             return  b;
         } else if (n == b) {
