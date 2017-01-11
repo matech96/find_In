@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<!--Place card (Not shown by default!)-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/placeCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:animateLayoutChanges="false"
+    android:background="@color/colorSecondary"
+    android:visibility="gone"
+    android:animationCache="false"
+    android:onClick="selectRoom"
+    tools:showIn="@layout/activity_main">
+
+    <AutoCompleteTextView
+        android:id="@+id/PLsearch"
+        android:padding="@dimen/fab_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:inputType="textShortMessage"
+        android:imeOptions="actionDone"
+        android:hint="Where are you now?" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/accent_material_light"
+        android:onClick="handelButtonClick"
+        android:src="@drawable/ic_directions_black_48dp" />
+</LinearLayout>

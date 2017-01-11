@@ -94,9 +94,11 @@ public class RouteFinder {
      */
     public ArrayList<Edge> getEdgesInLevel(int level) {
         ArrayList<Edge> res = new ArrayList<>();
-        for (RNode n : ((HashMap<String, RNode>)getNodesInLevel(level)).values()) {
+        HashMap<String, RNode> nodesInLevel = (HashMap<String, RNode>) getNodesInLevel(level);
+        for (RNode n : nodesInLevel.values()) {
             for (Edge e : n.getConnections()) {
-                if (((RNode)e.getNeighborOf(n)).getLevel() == level) {
+                RNode neighbor = (RNode) e.getNeighborOf(n);
+                if (neighbor.getLevel() == level && !res.contains(e)) {
                     res.add(e);
                 }
             }
@@ -128,30 +130,23 @@ public class RouteFinder {
         return places;
     }
 
-    private static void closeStreamIfPossible(InputStream is) {
-        if (is != null) {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    private static void closeStreamIfPossible(InputStream is) {
+//        if (is != null) {
+//            try {
+//                is.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     /**
      * Reads the data from a JSON file.
      * @param fileName Name of the file.
      */
-    public void loadAllObjectOnLevel(String fileName, int level){
-        FileInputStream is = null;
-        try{
-            is = new FileInputStream(fileName);
-            loadAllObjectOnLevel(is, level);
-        }catch (Exception e){
-            System.out.println(e);
-        }finally {
-            closeStreamIfPossible(is);
-        }
+    public void loadAllObjectOnLevel(String fileName, int level) throws FileNotFoundException {
+        FileInputStream is = new FileInputStream(fileName);
+        loadAllObjectOnLevel(is, level);
     }
 
     private NodeType determineTypeOfNode(String name) {
@@ -210,8 +205,6 @@ public class RouteFinder {
         NodeType type = determineTypeOfNode(name);
         RNode newNode = new RNode(cords, level, type);
 
-        connectNodeToOtherLevels(newNode, name);
-
         return newNode;
     }
 
@@ -230,13 +223,13 @@ public class RouteFinder {
 
     private void loadNode(RNode node, String name) {
         //Add the new node to list
-        if (places.keySet().contains(name)) {
-            if (node.getType() == NodeType.ROOM) {
+        if (node.getType() == NodeType.ROOM) {
+            if (places.keySet().contains(name)) {
                 throw new RuntimeException("2 nodes has the same name. Only special nodes" +
                         " f.e. elevators can have the same name! The problematic name: " + name);
-            } else {
-                name += '_' + String.valueOf(places.size()); //Make sure every node is saved
             }
+        } else {
+            name += '_' + String.valueOf(places.size()); //Make sure every node is saved
         }
         places.put(name, node);
 
@@ -252,9 +245,10 @@ public class RouteFinder {
             int id = (Integer) node.get("id");
 
             String name = generateValidNodeName((String) node.get("title"));
-
             RNode newNode = JSONObjectToRNode(node, level);
             loadNode(newNode, name);
+
+            connectNodeToOtherLevels(newNode, name);
 
             id_node.put(id, newNode);
         }

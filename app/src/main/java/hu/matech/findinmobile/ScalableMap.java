@@ -61,16 +61,20 @@ public class ScalableMap extends SubsamplingScaleImageView {
             try {
                 InputStream is = context.getAssets().open("map_level_" + i + ".json");
                 rf.loadAllObjectOnLevel(is, i);
-                for (Node n : rf.getPlaces().values()) {
-                    Coordinates c = n.getCords();
-                    float x = (float) c.getX() - offsetX;
-                    float y = (float) c.getY() - offsetY;
-                    n.setCords(x, y);
-                }
+                setOffsetForNodes(offsetX, offsetY);
                 is.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void setOffsetForNodes(float offsetX, float offsetY) {
+        for (Node n : rf.getPlaces().values()) {
+            Coordinates c = n.getCords();
+            float x = (float) c.getX() - offsetX;
+            float y = (float) c.getY() - offsetY;
+            n.setCords(x, y);
         }
     }
 
@@ -298,12 +302,12 @@ public class ScalableMap extends SubsamplingScaleImageView {
             } else {
                 return rf.getLevelOfNode(n);
             }
-            while (b.isElavatorOrStairhouse()) {
+            while (b != null && b.isElavatorOrStairhouse()) {
                 Node c = toShow.getNextNodeInRoute(a, b);
                 a = b;
                 b = c;
             }
-            return rf.getLevelOfNode(b);
+            return rf.getLevelOfNode(a);
         }
     }
 

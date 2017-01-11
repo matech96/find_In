@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,12 +43,9 @@ public class MainActivity extends AppCompatActivity {
                     if (room != null) {
                         search.setText(room);
                         selectRoom(search.getText().toString());
-                    } else {
-                        redrawLevelButtons();
-                        LinearLayout placeCard = (LinearLayout) findViewById(R.id.placeCard);
-                        placeCard.setVisibility(View.GONE);
                     }
                     search.setAdapter(adapter);
+                    redrawLevelButtons();
                 }
                 return true;
             }
@@ -97,16 +93,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ScalableMap map = (ScalableMap) findViewById(R.id.map);
-//                map.highlightRoom((String) parent.getItemAtPosition(position));
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                 AutoCompleteTextView search = (AutoCompleteTextView) findViewById(R.id.search);
                 map.showRoute((String) parent.getItemAtPosition(position), search.getText().toString());
-//                if(!map.showRoute((String) parent.getItemAtPosition(position), search.getText().toString())) {
-//                    Toast.makeText(getApplicationContext(), "There is no route!",
-//                            Toast.LENGTH_LONG).show();
-//                }
                 selectRoom((String) parent.getItemAtPosition(position));
 
             }
