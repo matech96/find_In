@@ -9,7 +9,6 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:animateLayoutChanges="false"
-    android:background="@color/colorSecondary"
     android:visibility="gone"
     android:animationCache="false"
     android:onClick="selectRoom"
@@ -29,6 +28,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:padding="@dimen/fab_margin"
         android:background="@color/accent_material_light"
         android:onClick="handelButtonClick"
         android:src="@drawable/ic_directions_black_48dp" />

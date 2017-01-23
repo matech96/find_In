@@ -18,25 +18,10 @@
         android:orientation="vertical"
         android:animateLayoutChanges="true">
 
-        <!--Upper search bar-->
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <include layout="@layout/upper_search_bar" />
 
-            <AutoCompleteTextView
-                android:id="@+id/search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/fab_margin"
-                android:background="@android:color/transparent"
-                android:inputType="textShortMessage"
-                android:imeOptions="actionDone"
-                android:hint="Where do you want to go?"/>
-        </android.support.design.widget.AppBarLayout>
 
         <include layout="@layout/map_layout" />
-
-        <include layout="@layout/place_card" />
 
     </LinearLayout>
 
